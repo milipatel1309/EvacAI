@@ -356,8 +356,10 @@ Planned future enhancements include:
 
 # Contributors
 
+- Raj Shah
 - Mili Patel
-- OpenAI Codex-assisted development workflows
+- Parth Patel
+- Heni Patel
 
 ---
 
@@ -367,24 +369,18 @@ This project is intended for educational, research, and innovation purposes.
 
 ---
 
-# Screenshots
-
-_Add application screenshots here_
-
----
 
 # Acknowledgments
 
 Special thanks to:
 
-- OpenAI
 - IBM Watsonx
+- IBM Cloud Space
 - Render
 - FastAPI
 - SwiftUI
 - Xcode
 - Mapbox
-- Google Maps APIs
 
 ---
 
