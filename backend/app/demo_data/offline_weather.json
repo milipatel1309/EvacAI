@@ -1,0 +1,15 @@
+{
+  "current": {
+    "time": "demo",
+    "temperature_2m": 31.0,
+    "apparent_temperature": 35.0,
+    "precipitation": 0.0,
+    "rain": 0.0,
+    "showers": 0.0,
+    "weather_code": 0,
+    "wind_speed_10m": 9.0
+  },
+  "timezone": "Demo/Offline",
+  "timezone_abbreviation": "DEMO"
+}
+

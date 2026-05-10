@@ -1,0 +1,19 @@
+{
+  "alerts": [
+    {
+      "event": "Heat Advisory",
+      "severity": "Moderate",
+      "urgency": "Expected",
+      "certainty": "Likely",
+      "headline": "Heat Advisory in effect this afternoon",
+      "description": "Heat index values up to 100°F. Drink plenty of fluids, stay in an air-conditioned room, stay out of the sun, and check on relatives and neighbors.",
+      "instruction": "If you must be outside, take frequent breaks in the shade and drink water.",
+      "effective": null,
+      "expires": null,
+      "senderName": "Demo Offline Mode",
+      "web": "https://www.weather.gov/"
+    }
+  ],
+  "count": 1
+}
+

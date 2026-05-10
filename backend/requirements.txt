@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+gunicorn
+httpx
+pydantic
+jinja2
+python-multipart
+python-dotenv
+ibm-cos-sdk
+# Optional ML dependency: enables the Random Forest risk model.
+# The app gracefully falls back to a deterministic heuristic scorer if
+# scikit-learn is not installed (the same response shape is preserved).
+scikit-learn

@@ -1,0 +1,9 @@
+[
+  { "q": "new york", "display_name": "New York, NY, USA", "lat": 40.7128, "lon": -74.0060 },
+  { "q": "san francisco", "display_name": "San Francisco, CA, USA", "lat": 37.7749, "lon": -122.4194 },
+  { "q": "los angeles", "display_name": "Los Angeles, CA, USA", "lat": 34.0522, "lon": -118.2437 },
+  { "q": "chicago", "display_name": "Chicago, IL, USA", "lat": 41.8781, "lon": -87.6298 },
+  { "q": "toronto", "display_name": "Toronto, ON, Canada", "lat": 43.6532, "lon": -79.3832 },
+  { "q": "vancouver", "display_name": "Vancouver, BC, Canada", "lat": 49.2827, "lon": -123.1207 }
+]
+

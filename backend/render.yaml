@@ -1,0 +1,33 @@
+# Render Blueprint — Evac-AI (FastAPI + Gunicorn).
+# Secrets use sync: false so values are set in the Render Dashboard (not committed).
+# https://render.com/docs/infrastructure-as-code
+
+services:
+  - type: web
+    runtime: docker
+    name: evac-ai
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: MAPBOX_ACCESS_TOKEN
+        sync: false
+      - key: IBM_CLOUD_API_KEY
+        sync: false
+      - key: WATSONX_API_KEY
+        sync: false
+      - key: WATSONX_PROJECT_ID
+        sync: false
+      - key: WATSONX_URL
+        sync: false
+      - key: WATSONX_MODEL_ID
+        sync: false
+      - key: IBM_COS_ENDPOINT
+        sync: false
+      - key: IBM_COS_BUCKET
+        sync: false
+      - key: IBM_COS_RESOURCE_INSTANCE_ID
+        sync: false
+      - key: IBM_COS_API_KEY
+        sync: false

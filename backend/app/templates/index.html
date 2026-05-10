@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evac-AI</title>
+    <meta
+      name="description"
+      content="Evac-AI — guided, location-aware emergency preparedness with live alerts, weather, nearby help, ML risk prediction, and IBM watsonx action plans."
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <div class="aurora__layer aurora__layer--a"></div>
+      <div class="aurora__layer aurora__layer--b"></div>
+      <div class="aurora__layer aurora__layer--c"></div>
+    </div>
+
+    <main class="container">
+      <header class="hero">
+        <div class="hero__brand">
+          <span class="hero__logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 4 6v6c0 5 3.4 9.5 8 10 4.6-.5 8-5 8-10V6l-8-4z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+          </span>
+          <div>
+            <h1>Evac-AI</h1>
+            <p class="sub">
+              A guided, location-aware emergency assistant: live alerts, weather, nearby help, ML risk, and IBM watsonx action plans.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Step progress -->
+      <nav class="stepper" aria-label="Progress">
+        <ol class="stepper__list" id="stepperList">
+          <li class="stepper__item is-active" data-step="1"><span class="stepper__dot">1</span><span class="stepper__label">Location</span></li>
+          <li class="stepper__item" data-step="2"><span class="stepper__dot">2</span><span class="stepper__label">Alerts</span></li>
+          <li class="stepper__item" data-step="3"><span class="stepper__dot">3</span><span class="stepper__label">Weather</span></li>
+          <li class="stepper__item" data-step="4"><span class="stepper__dot">4</span><span class="stepper__label">Resources</span></li>
+          <li class="stepper__item" data-step="5"><span class="stepper__dot">5</span><span class="stepper__label">ML Risk</span></li>
+          <li class="stepper__item" data-step="6"><span class="stepper__dot">6</span><span class="stepper__label">Action Plan</span></li>
+          <li class="stepper__item" data-step="7"><span class="stepper__dot">7</span><span class="stepper__label">About</span></li>
+        </ol>
+        <div class="stepper__bar"><div id="stepperBar" class="stepper__bar-fill" style="width: 14%"></div></div>
+      </nav>
+
+      <!-- ============ STEP 1: LOCATION ============ -->
+      <section class="step is-active" data-step="1" id="step-1">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 1 / 7</span>
+          <h2>Your location</h2>
+          <p class="muted">
+            Choose your country and state or province. Add a ZIP or postal code to refine the map pin. This point is used for alerts, weather, and resources.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="location-grid">
+            <div class="row row--stack">
+              <label class="label" for="locCountry">Country</label>
+              <select id="locCountry" class="input small">
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+              </select>
+            </div>
+            <div class="row row--stack">
+              <label class="label" for="locRegion" id="locRegionLabel">State</label>
+              <select id="locRegion" class="input small">
+                <option value="">— choose —</option>
+              </select>
+            </div>
+            <div class="row row--stack location-grid__postal">
+              <label class="label" for="locPostal">ZIP or postal code <span class="muted">(optional)</span></label>
+              <input
+                id="locPostal"
+                class="input small"
+                type="text"
+                maxlength="12"
+                autocomplete="postal-code"
+                placeholder="US: 90210 · Canada: K1A 0A6"
+              />
+            </div>
+          </div>
+          <div class="row" style="margin-top: 12px">
+            <button type="button" id="btnUseLocation" class="btn btn--primary">Use this location</button>
+          </div>
+          <div id="geocodeProviderHint" class="geo-hint" hidden></div>
+          <div id="geoError" class="geo-error" hidden></div>
+          <div id="geoResults" class="results"></div>
+
+          <details class="advanced-details">
+            <summary class="advanced-details__summary">Advanced — search any address</summary>
+            <p class="muted" style="margin: 10px 0 8px">
+              Free-text geocode if you need a street address. Country above still sets which alert feed (US vs Canada) is used in the next step.
+            </p>
+            <div class="row">
+              <input id="q" class="input" placeholder="City, address, landmark…" autocomplete="off" />
+              <button type="button" id="btnGeocode" class="btn btn--ghost">Find</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" disabled>Back</button>
+          <button class="btn btn--primary" data-next disabled id="btnStep1Next">Continue to Alerts →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 2: ALERTS ============ -->
+      <section class="step" data-step="2" id="step-2" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 2 / 7</span>
+          <h2>Live alerts</h2>
+          <p class="muted">
+            <strong>US:</strong> National Weather Service. <strong>Canada:</strong> MSC GeoMet weather alerts.
+            Alerts load automatically for your location; use Refresh for the latest.
+          </p>
+        </div>
+
+        <div class="card">
+          <p class="alerts-summary" id="alertsSummaryLine"></p>
+          <div class="row">
+            <button type="button" id="btnAlertsRefresh" class="btn btn--primary">Refresh alerts</button>
+          </div>
+
+          <details class="advanced-details" id="alertsAdvanced">
+            <summary class="advanced-details__summary">Advanced — region or nationwide scope</summary>
+            <div class="row" style="margin-top: 12px">
+              <label class="label">Country</label>
+              <select id="alertCountry" class="input small">
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+                <option value="auto">Auto (detect) — point only</option>
+              </select>
+            </div>
+            <div class="row">
+              <label class="label">Scope</label>
+              <select id="alertScope" class="input small">
+                <option value="point">This location (point)</option>
+                <option value="region">State / province</option>
+                <option value="national">Nationwide</option>
+              </select>
+            </div>
+            <div id="alertRegionRow" class="row" style="display: none">
+              <label class="label" id="alertRegionLabel">Region</label>
+              <select id="alertRegion" class="input small">
+                <option value="">— choose —</option>
+              </select>
+            </div>
+            <div class="row">
+              <button type="button" id="btnAlertsApply" class="btn btn--ghost">Apply scope</button>
+            </div>
+          </details>
+
+          <div id="alerts" class="results"></div>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" data-next>Continue to Weather →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 3: WEATHER ============ -->
+      <section class="step" data-step="3" id="step-3" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 3 / 7</span>
+          <h2>Live weather</h2>
+          <p class="muted">
+            Open-Meteo (no API key) — temperature, feels-like, wind, and recent precipitation for your point.
+          </p>
+        </div>
+
+        <div class="card">
+          <p class="muted" id="weatherForLine"></p>
+          <div class="row">
+            <span class="label">Units</span>
+            <label class="radio-pill">
+              <input type="radio" name="tempUnit" id="tempUnitF" value="f" checked />
+              <span>°F (Fahrenheit)</span>
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="tempUnit" id="tempUnitC" value="c" />
+              <span>°C (Celsius)</span>
+            </label>
+          </div>
+          <div class="row">
+            <button type="button" id="btnWeather" class="btn btn--ghost">Refresh weather</button>
+          </div>
+          <div id="weather" class="results"></div>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" data-next>Continue to Resources →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 4: RESOURCES ============ -->
+      <section class="step" data-step="4" id="step-4" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 4 / 7</span>
+          <h2>Nearby help &amp; resources</h2>
+          <p class="muted">
+            We surface <strong>shelters</strong>, <strong>clinics</strong>, <strong>hospitals</strong>,
+            <strong>food banks</strong>, and <strong>community centers</strong> with distance, directions,
+            phone, and website. Mapbox/Google when configured, else OpenStreetMap.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="resource-types">
+            <span class="label" id="resourceTypesLabel">What to search for</span>
+            <div class="checkbox-grid" role="group" aria-labelledby="resourceTypesLabel">
+              <label class="checkbox-pill"><input type="checkbox" class="js-resource-type" value="shelter" checked /> Shelters</label>
+              <label class="checkbox-pill"><input type="checkbox" class="js-resource-type" value="clinic" checked /> Clinics</label>
+              <label class="checkbox-pill"><input type="checkbox" class="js-resource-type" value="hospital" checked /> Hospitals</label>
+              <label class="checkbox-pill"><input type="checkbox" class="js-resource-type" value="food_bank" checked /> Food banks</label>
+              <label class="checkbox-pill"><input type="checkbox" class="js-resource-type" value="community_centre" checked /> Community centers</label>
+            </div>
+            <p id="resourceTypesHint" class="muted resource-types__hint" hidden>Select at least one resource type.</p>
+          </div>
+          <div class="row row--wrap resource-find-row">
+            <label class="label">Radius (miles)</label>
+            <input id="radiusMi" class="input small" type="number" min="1" max="50" step="1" value="10" inputmode="numeric" />
+            <span class="label">mi</span>
+            <button id="btnResources" class="btn btn--primary" disabled>Find resources</button>
+          </div>
+          <div id="resources" class="results"></div>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" data-next>Continue to ML Risk →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 5: ML RISK ============ -->
+      <section class="step" data-step="5" id="step-5" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 5 / 7</span>
+          <h2>ML risk prediction</h2>
+          <p class="muted">
+            A small Random Forest blends the signals you just gathered — alert count &amp; severity, weather
+            (wind, precipitation, temperature), and nearby resource density — into a Low / Medium / High
+            classification with a 0–100 score, confidence, and the reasons behind it.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <button id="btnRisk" class="btn btn--primary" disabled>Predict risk now</button>
+            <span id="riskModelInfo" class="muted"></span>
+          </div>
+          <div id="risk" class="results"></div>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" data-next>Continue to Action Plan →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 6: ACTION PLAN ============ -->
+      <section class="step" data-step="6" id="step-6" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 6 / 7</span>
+          <h2>IBM watsonx action plan</h2>
+          <p class="muted">
+            Generates a structured plan with IBM watsonx.ai using your alerts, weather, resources, and ML risk.
+            <a href="/api/ibm/status" target="_blank" rel="noreferrer">Check IBM status</a>
+          </p>
+          <p id="ibmPlanServerHint" class="muted" style="margin-top: 8px; display: none"></p>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <label class="label">Scenario</label>
+            <select id="scenario" class="input small" style="min-width: 220px">
+              <option value="general">General emergency</option>
+              <option value="flood">Flood</option>
+              <option value="heatwave">Heatwave</option>
+              <option value="wildfire_smoke">Wildfire smoke</option>
+              <option value="power_outage">Power outage</option>
+              <option value="winter_storm">Winter storm</option>
+              <option value="hurricane">Hurricane</option>
+            </select>
+            <label class="checkbox-pill">
+              <input type="checkbox" id="archiveCos" />
+              <span>Archive to IBM COS</span>
+            </label>
+            <button id="btnPlan" class="btn btn--primary" disabled>Generate plan</button>
+          </div>
+          <div id="plan" class="results"></div>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" data-next>Continue to About →</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 7: ABOUT ============ -->
+      <section class="step" data-step="7" id="step-7" aria-hidden="true">
+        <div class="step__head">
+          <span class="chip chip--accent">Step 7 / 7</span>
+          <h2>How it works &amp; what powers it</h2>
+          <p class="muted">A quick tour of the pipeline and the technology stack.</p>
+        </div>
+
+        <!-- How it works -->
+        <div class="card">
+          <h3 class="card__title">Pipeline</h3>
+          <ol class="pipeline">
+            <li class="pipeline__step"><span class="pipeline__num">1</span><div><strong>Location</strong><div class="muted">Country, state/province, optional postal — geocoded via Mapbox/Google/Nominatim</div></div></li>
+            <li class="pipeline__arrow" aria-hidden="true">→</li>
+            <li class="pipeline__step"><span class="pipeline__num">2</span><div><strong>Alerts + Weather</strong><div class="muted">NWS / MSC GeoMet + Open-Meteo</div></div></li>
+            <li class="pipeline__arrow" aria-hidden="true">→</li>
+            <li class="pipeline__step"><span class="pipeline__num">3</span><div><strong>Resources</strong><div class="muted">Nearby shelters, clinics, hospitals…</div></div></li>
+            <li class="pipeline__arrow" aria-hidden="true">→</li>
+            <li class="pipeline__step"><span class="pipeline__num">4</span><div><strong>ML Risk</strong><div class="muted">Random Forest (sklearn) classifier</div></div></li>
+            <li class="pipeline__arrow" aria-hidden="true">→</li>
+            <li class="pipeline__step"><span class="pipeline__num">5</span><div><strong>watsonx Plan</strong><div class="muted">IBM Granite — structured action plan</div></div></li>
+          </ol>
+        </div>
+
+        <!-- Tech stack -->
+        <div class="card">
+          <h3 class="card__title">Technology stack</h3>
+          <div class="techgrid">
+            <div class="tech"><strong>Frontend</strong><span class="muted">HTML, CSS, vanilla JavaScript</span></div>
+            <div class="tech"><strong>Backend</strong><span class="muted">FastAPI + Uvicorn (Python)</span></div>
+            <div class="tech"><strong>ML</strong><span class="muted">scikit-learn Random Forest (with deterministic fallback)</span></div>
+            <div class="tech"><strong>IBM watsonx.ai</strong><span class="muted">Granite foundation model — structured action plans</span></div>
+            <div class="tech"><strong>IBM Cloud Object Storage</strong><span class="muted">Optional plan archive</span></div>
+            <div class="tech"><strong>Weather</strong><span class="muted">Open-Meteo (no key)</span></div>
+            <div class="tech"><strong>Alerts</strong><span class="muted">NWS (US) + MSC GeoMet (CA)</span></div>
+            <div class="tech"><strong>Geocoding &amp; POI</strong><span class="muted">Mapbox / Google / OSM Nominatim &amp; Overpass</span></div>
+          </div>
+        </div>
+
+        <!-- Model performance -->
+        <div class="card">
+          <h3 class="card__title">Model performance <span class="chip chip--demo">demo / illustrative</span></h3>
+          <p class="muted">Held-out evaluation on a synthetic split — useful as a sanity benchmark, not a real-world guarantee.</p>
+          <div class="metrics">
+            <div class="metric"><div class="metric__num" id="metricAcc">85%</div><div class="metric__label">Accuracy</div></div>
+            <div class="metric"><div class="metric__num" id="metricMacro">84%</div><div class="metric__label">Macro F1</div></div>
+            <div class="metric"><div class="metric__num" id="metricWeighted">85%</div><div class="metric__label">Weighted F1</div></div>
+            <div class="metric"><div class="metric__num">3</div><div class="metric__label">Classes (Low / Medium / High)</div></div>
+          </div>
+        </div>
+
+        <!-- Responsible AI disclaimer -->
+        <div class="card card--warn">
+          <h3 class="card__title">Responsible AI disclaimer</h3>
+          <p>
+            Evac-AI is a hackathon demo. <strong>It does not replace official emergency instructions.</strong>
+            Always follow your local government, the National Weather Service / Environment Canada, the Red Cross,
+            and emergency services. AI-generated content can be incomplete or inaccurate — verify critical actions
+            with authoritative sources before acting.
+          </p>
+        </div>
+
+        <div class="step__footer">
+          <button class="btn btn--ghost" data-prev>← Back</button>
+          <button class="btn btn--primary" id="btnRestart">Start over</button>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="muted">
+          Evac-AI · Built for the hackathon. Live data depends on third-party APIs; caching is enabled.
+        </p>
+      </footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

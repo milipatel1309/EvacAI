@@ -1,0 +1,43 @@
+[
+  {
+    "name": "Downtown Community Center",
+    "category": "community_centre",
+    "lat": 40.7124,
+    "lon": -74.0049,
+    "address": { "city": "New York", "state": "NY" },
+    "phone": null,
+    "website": null,
+    "source": "Offline Demo"
+  },
+  {
+    "name": "City Health Clinic",
+    "category": "clinic",
+    "lat": 40.7142,
+    "lon": -74.0071,
+    "address": { "city": "New York", "state": "NY" },
+    "phone": null,
+    "website": null,
+    "source": "Offline Demo"
+  },
+  {
+    "name": "Emergency Shelter",
+    "category": "shelter",
+    "lat": 40.7108,
+    "lon": -74.0102,
+    "address": { "city": "New York", "state": "NY" },
+    "phone": null,
+    "website": null,
+    "source": "Offline Demo"
+  },
+  {
+    "name": "Toronto Community Centre",
+    "category": "community_centre",
+    "lat": 43.6537,
+    "lon": -79.3840,
+    "address": { "city": "Toronto", "state": "ON" },
+    "phone": null,
+    "website": null,
+    "source": "Offline Demo"
+  }
+]
+
